@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 cnn_path = os.getenv("CNN_MODEL_PATH", "infrastructure/model_files/bestmodel_glove_OA9.keras")
 sigmas_path = os.getenv("SIGMAS_PATH", "infrastructure/model_files/sigmas_9.json")
 vocab_path = os.getenv("VOCAB_PATH", "infrastructure/model_files/word_to_idx_9.json")
-global_model_loader = ModelLoader(cnn_path, sigmas_path, vocab_path)
+global_model_loader = ModelLoader(cnn_path, sigmas_path)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
