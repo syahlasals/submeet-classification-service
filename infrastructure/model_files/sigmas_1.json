@@ -1,0 +1,90 @@
+[
+  {
+    "class_index": 0,
+    "label": "Artificial Intelligence",
+    "mu": 1.0,
+    "sigma": 0.04277222603559494,
+    "threshold": 0.6150499582290649,
+    "alpha_used": 9
+  },
+  {
+    "class_index": 1,
+    "label": "Energy Engineering",
+    "mu": 1.0,
+    "sigma": 0.08043495565652847,
+    "threshold": 0.5,
+    "alpha_used": 9
+  },
+  {
+    "class_index": 2,
+    "label": "Environmental Health",
+    "mu": 1.0,
+    "sigma": 0.018495256081223488,
+    "threshold": 0.8335427045822144,
+    "alpha_used": 9
+  },
+  {
+    "class_index": 3,
+    "label": "Geography",
+    "mu": 1.0,
+    "sigma": 0.05668016895651817,
+    "threshold": 0.5,
+    "alpha_used": 9
+  },
+  {
+    "class_index": 4,
+    "label": "Geology",
+    "mu": 1.0,
+    "sigma": 0.018731970340013504,
+    "threshold": 0.8314122557640076,
+    "alpha_used": 9
+  },
+  {
+    "class_index": 5,
+    "label": "Green Infrastructure",
+    "mu": 1.0,
+    "sigma": 0.058876655995845795,
+    "threshold": 0.5,
+    "alpha_used": 9
+  },
+  {
+    "class_index": 6,
+    "label": "Hydrology",
+    "mu": 1.0,
+    "sigma": 0.038893021643161774,
+    "threshold": 0.6499627828598022,
+    "alpha_used": 9
+  },
+  {
+    "class_index": 7,
+    "label": "Natural Resource Management",
+    "mu": 1.0,
+    "sigma": 0.016193341463804245,
+    "threshold": 0.8542599081993103,
+    "alpha_used": 9
+  },
+  {
+    "class_index": 8,
+    "label": "Renewable Energy",
+    "mu": 1.0,
+    "sigma": 0.0735044777393341,
+    "threshold": 0.5,
+    "alpha_used": 9
+  },
+  {
+    "class_index": 9,
+    "label": "Soil Sciences",
+    "mu": 1.0,
+    "sigma": 0.02530188113451004,
+    "threshold": 0.7722830772399902,
+    "alpha_used": 9
+  },
+  {
+    "class_index": 10,
+    "label": "Sustainable Development",
+    "mu": 1.0,
+    "sigma": 0.06851744651794434,
+    "threshold": 0.5,
+    "alpha_used": 9
+  }
+]
