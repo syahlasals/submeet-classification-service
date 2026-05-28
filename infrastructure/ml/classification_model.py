@@ -1,6 +1,5 @@
 import numpy as np
 import logging
-from domain.models.topic_category import ISSAT_TOPICS
 
 logger = logging.getLogger(__name__)
 
@@ -16,27 +15,30 @@ class ClassificationModel:
         max_class = int(np.argmax(probs))
         max_prob = float(probs[max_class])
         
-        # debug log
-        logger.info(f"Skor Probabilitas Topik Tertinggi ({ISSAT_TOPICS[max_class]}): {max_prob:.4f}")
-        
-        # default threshold minimum
+        predicted_topic = f"Topic-{max_class}"
         threshold = 0.5
         
         try:
             if isinstance(self.sigmas, list):
                 class_data = self.sigmas[max_class]
-                if isinstance(class_data, dict) and "threshold" in class_data:
-                    threshold = float(class_data["threshold"])
+                if isinstance(class_data, dict):
+                    # Ambil nama topik
+                    if "label" in class_data:
+                        predicted_topic = class_data["label"]
+                    # Ambil threshold
+                    if "threshold" in class_data:
+                        threshold = float(class_data["threshold"])
         except Exception as e:
-            logger.error(f"Gagal membaca threshold: {e}")
+            logger.error(f"Gagal membaca data dari sigmas.json: {e}")
             
+        # debug log
+        logger.info(f"Skor Probabilitas Topik Tertinggi ({predicted_topic}): {max_prob:.4f}")
         logger.info(f"Threshold yang harus dilewati: {threshold:.4f}")
         
         if max_prob >= threshold:
             logger.info("-> HASIL: IN-SCOPE (Diterima)")
-            predicted_topic = ISSAT_TOPICS[max_class]
             return {
-                "relevance_label": "relevant",
+                "relevance_label": "in_scope",
                 "predicted_topic": predicted_topic,
                 "confidence_score": max_prob
             }
