@@ -1,38 +1,51 @@
 # entry point FastAPI, tempat app dibuat dan router di-register
-import os
 import logging
 from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
+from uvicorn import config
+from infrastructure.preprocessing.text_preprocessor import TextPreprocessor
 
 from api.routers import topic_detection_router
+from config.settings import settings
 from infrastructure.ml.model_loader import ModelLoader
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-cnn_path = os.getenv("CNN_MODEL_PATH", "infrastructure/model_files/bestmodel_glove_OA9.keras")
-sigmas_path = os.getenv("SIGMAS_PATH", "infrastructure/model_files/sigmas_9.json")
-vocab_path = os.getenv("VOCAB_PATH", "infrastructure/model_files/word_to_idx_9.json")
-global_model_loader = ModelLoader(cnn_path, sigmas_path)
+global_model_loader = ModelLoader(
+    cnn_path=settings.CNN_MODEL_PATH, 
+    sigmas_path=settings.SIGMAS_PATH,
+    # vocab_path=settings.VOCAB_PATH
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global_model_loader.load_all()
-    app.state.model_loader = global_model_loader
+    try:
+        global_model_loader.load_all()
+        app.state.model_loader = global_model_loader
+        app.state.preprocessor = TextPreprocessor(   # ← tambahkan ini
+            vocab_path=settings.VOCAB_PATH,
+            max_seq_len=350,
+            max_vocab=20000
+        )
+        logger.info("Model dan preprocessor berhasil dimuat.")
+    except Exception as e:
+        logger.error(f"Gagal memuat model dan preprocessor: {e}")
+        raise e
     yield
 
-app = FastAPI(title=os.getenv("APP_NAME", "SubMeet AI"), lifespan=lifespan)
+app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
 
 # TEMPORARY MOCK WEBHOOK FOR TESTING (comment jika sudah tidak diperlukan)
-@app.post("/api/mock-laravel-webhook")
-async def mock_laravel_webhook(request: Request):
-    payload = await request.json()
-    logger.info("============== WEBHOOK DITERIMA DARI AI =============")
-    logger.info(f"Payload JSON: {payload}")
-    logger.info("=====================================================")
-    return {"status": "success", "message": "Mock Laravel received the data!"}
+# @app.post("/api/mock-laravel-webhook")
+# async def mock_laravel_webhook(request: Request):
+#     payload = await request.json()
+#     logger.info("============== WEBHOOK DITERIMA DARI AI =============")
+#     logger.info(f"Payload JSON: {payload}")
+#     logger.info("=====================================================")
+#     return {"status": "success", "message": "Mock Laravel received the data!"}
 
 # Daftarkan router
 app.include_router(topic_detection_router.router, prefix="/api", tags=["Topic Detection"])
