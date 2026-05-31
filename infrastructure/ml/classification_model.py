@@ -16,7 +16,7 @@ class ClassificationModel:
         max_prob = float(probs[max_class])
         
         predicted_topic = f"Topic-{max_class}"
-        threshold = 0.5
+        sigma_i = 0.0
         
         try:
             if isinstance(self.sigmas, list):
@@ -25,12 +25,15 @@ class ClassificationModel:
                     # Ambil nama topik
                     if "label" in class_data:
                         predicted_topic = class_data["label"]
-                    # Ambil threshold
-                    if "threshold" in class_data:
-                        threshold = float(class_data["threshold"])
+                    # Ambil sigma
+                    if "sigma" in class_data:
+                        sigma_i = float(class_data["sigma"])
         except Exception as e:
             logger.error(f"Gagal membaca data dari sigmas.json: {e}")
             
+        # Hitung threshold
+        threshold = max(0.5, 1.0 - (self.alpha * sigma_i))
+
         # debug log
         logger.info(f"Skor Probabilitas Topik Tertinggi ({predicted_topic}): {max_prob:.4f}")
         logger.info(f"Threshold yang harus dilewati: {threshold:.4f}")

@@ -23,4 +23,5 @@ class TextPreprocessor:
             [seq], maxlen=self.max_seq_len, dtype='int32', 
             padding='post', truncating='post', value=0
         )
+        # print(padded_seq)
         return padded_seq

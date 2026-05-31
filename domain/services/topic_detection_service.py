@@ -1,4 +1,6 @@
 import logging
+import os
+from config.settings import settings
 from domain.models.prediction_result import PredictionResult
 from infrastructure.preprocessing.text_preprocessor import TextPreprocessor
 from infrastructure.ml.classification_model import ClassificationModel
@@ -15,7 +17,7 @@ class TopicDetectionService:
         
         try:
             # 1. Gabungkan Teks
-            raw_text = f"{title}. {abstract}"
+            raw_text = f"{title} {abstract}"
             
             # 2. Panggil Technical Service: Preprocessing
             cleaned_text = self.preprocessor.process(raw_text)
@@ -23,13 +25,18 @@ class TopicDetectionService:
             # 3. Panggil Technical Service: ML Prediction (CNN + DOC)
             result_dict = self.classifier.predict(cleaned_text)
             
+            # ambil informasi model
+            model_path = settings.CNN_MODEL_PATH
+            file_name = os.path.basename(model_path)
+            model_name = os.path.splitext(file_name)[0]
+
             # 4. Petakan ke Domain Model
             return PredictionResult(
                 paper_sub_id=paper_sub_id,
                 relevance_label=result_dict["relevance_label"],
                 predicted_topic=result_dict["predicted_topic"],
                 confidence_score=result_dict["confidence_score"],
-                model_label_raw="CNN_DOC_ALPHA_9.0"
+                model_label_raw=model_name
             )
             
         except Exception as e:
