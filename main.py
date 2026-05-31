@@ -27,8 +27,8 @@ async def lifespan(app: FastAPI):
         app.state.model_loader = global_model_loader
         app.state.preprocessor = TextPreprocessor(   # ← tambahkan ini
             vocab_path=settings.VOCAB_PATH,
-            max_seq_len=350,
-            max_vocab=20000
+            max_seq_len=settings.MAX_SEQ_LEN,
+            max_vocab=settings.MAX_VOCAB
         )
         logger.info("Model dan preprocessor berhasil dimuat.")
     except Exception as e:

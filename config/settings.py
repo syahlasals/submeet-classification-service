@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     SIGMAS_PATH: str
     VOCAB_PATH: str
 
+    # Hyperparameter Model
+    ALPHA: int
+    MAX_SEQ_LEN: int
+    MAX_VOCAB: int
+
     # Integrasi Laravel
     # LARAVEL_URL: str
     # LARAVEL_WEBHOOK_SECRET: str
@@ -18,6 +23,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
+        extra='ignore'
     )
 
 settings = Settings()

@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class ClassificationModel:
-    def __init__(self, model_loader, alpha: float = 9.0):
+    def __init__(self, model_loader, alpha: float):
         self.cnn_model = model_loader.cnn_model
         self.sigmas = model_loader.sigmas
         self.alpha = alpha

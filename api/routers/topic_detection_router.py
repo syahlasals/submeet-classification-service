@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Request 
+from config.settings import settings
 from schemas.request_schema import TopicDetectionRequest
 from domain.models.prediction_result import PredictionResult 
 from domain.services.topic_detection_service import TopicDetectionService
@@ -10,11 +11,11 @@ router = APIRouter()
 def get_topic_service(request: Request) -> TopicDetectionService:
     loader = request.app.state.model_loader
     preprocessor = request.app.state.preprocessor
-    classifier = ClassificationModel(model_loader=loader, alpha=9.0)
+    classifier = ClassificationModel(model_loader=loader, alpha=settings.ALPHA)
     return TopicDetectionService(preprocessor, classifier)
 
 @router.post("/detect", response_model=PredictionResult, status_code=200)
-async def detect_topic(
+def detect_topic(
     payload: TopicDetectionRequest, 
     service: TopicDetectionService = Depends(get_topic_service)
 ):
