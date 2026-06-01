@@ -1,6 +1,3 @@
-# Domain Layer
-# domain objects
-# from dataclasses import dataclass
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
 

@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     APP_NAME: str
     PORT: int
 
-    # Model paths (wajib ada)
+    # Model paths
     CNN_MODEL_PATH: str
     SIGMAS_PATH: str
     VOCAB_PATH: str
@@ -14,10 +14,6 @@ class Settings(BaseSettings):
     ALPHA: int
     MAX_SEQ_LEN: int
     MAX_VOCAB: int
-
-    # Integrasi Laravel
-    # LARAVEL_URL: str
-    # LARAVEL_WEBHOOK_SECRET: str
 
     model_config = SettingsConfigDict(
         env_file=".env",

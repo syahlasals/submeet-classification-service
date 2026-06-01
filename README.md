@@ -1,13 +1,12 @@
 # SubMeet Classification Service
 
-Service ini menangani klasifikasi topik abstrak/judul paper menggunakan model machine learning, lalu mengirim hasil prediksi ke webhook yang ditentukan.
+Service ini menangani klasifikasi topik abstrak/judul paper menggunakan model machine learning dan mengembalikan hasil prediksi langsung lewat response API.
 
 ## Fitur
 
 - REST API berbasis FastAPI.
-- Prediksi topik paper secara asynchronous melalui background task.
+- Prediksi topik paper secara langsung dari endpoint `/api/detect`.
 - Integrasi preprocessing teks, model CNN, dan threshold berbasis sigma.
-- Endpoint mock webhook untuk kebutuhan testing lokal.
 
 ## Struktur Proyek
 
@@ -76,7 +75,7 @@ Jika ingin memakai port dari `.env`, jalankan dengan port yang sama seperti nila
 
 ### `POST /api/detect`
 
-Menerima request klasifikasi topik dan memprosesnya di background.
+Menerima request klasifikasi topik dan mengembalikan hasil prediksi langsung.
 
 #### Request Body
 
@@ -84,8 +83,7 @@ Menerima request klasifikasi topik dan memprosesnya di background.
 {
   "paper_sub_id": 123,
   "title": "Judul paper",
-  "abstract": "Isi abstrak paper",
-  "webhook_url": "https://example.com/webhook"
+  "abstract": "Isi abstrak paper"
 }
 ```
 
@@ -93,15 +91,13 @@ Menerima request klasifikasi topik dan memprosesnya di background.
 
 ```json
 {
-  "status": "accepted",
-  "job_id": "uuid-baru",
-  "message": "Permintaan klasifikasi sedang diproses di latar belakang."
+  "paper_sub_id": 123,
+  "relevance_label": "in_scope",
+  "predicted_topic": "Renewable Energy",
+  "confidence_score": 0.9876,
+  "model_label_raw": "bestmodel_glove_OA1"
 }
 ```
-
-### `POST /api/mock-laravel-webhook`
-
-Endpoint dummy untuk testing payload hasil prediksi sebelum dihubungkan ke sistem utama.
 
 ## Alur Kerja
 
@@ -110,7 +106,7 @@ Endpoint dummy untuk testing payload hasil prediksi sebelum dihubungkan ke siste
 3. Teks dibersihkan dan diubah menjadi sequence.
 4. Model CNN melakukan prediksi.
 5. Threshold sigma dibandingkan dengan confidence score.
-6. Hasil prediksi dikirim ke `webhook_url`.
+6. Hasil prediksi dikembalikan langsung sebagai JSON response.
 
 ## Catatan Implementasi
 
@@ -120,4 +116,4 @@ Endpoint dummy untuk testing payload hasil prediksi sebelum dihubungkan ke siste
 
 ## Testing Lokal
 
-Untuk mencoba alur penuh tanpa sistem eksternal, arahkan `webhook_url` ke endpoint mock webhook di aplikasi ini.
+Untuk mencoba alur penuh, buka `http://127.0.0.1:8001/docs` lalu jalankan `POST /api/detect` dari Swagger UI.

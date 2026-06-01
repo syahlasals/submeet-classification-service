@@ -1,4 +1,3 @@
-# Technical Services
 import logging
 import json
 import tensorflow as tf

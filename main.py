@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
     try:
         global_model_loader.load_all()
         app.state.model_loader = global_model_loader
-        app.state.preprocessor = TextPreprocessor(   # ← tambahkan ini
+        app.state.preprocessor = TextPreprocessor(
             vocab_path=settings.VOCAB_PATH,
             max_seq_len=settings.MAX_SEQ_LEN,
             max_vocab=settings.MAX_VOCAB
@@ -37,15 +37,6 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
-
-# TEMPORARY MOCK WEBHOOK FOR TESTING (comment jika sudah tidak diperlukan)
-# @app.post("/api/mock-laravel-webhook")
-# async def mock_laravel_webhook(request: Request):
-#     payload = await request.json()
-#     logger.info("============== WEBHOOK DITERIMA DARI AI =============")
-#     logger.info(f"Payload JSON: {payload}")
-#     logger.info("=====================================================")
-#     return {"status": "success", "message": "Mock Laravel received the data!"}
 
 # Daftarkan router
 app.include_router(topic_detection_router.router, prefix="/api", tags=["Topic Detection"])
