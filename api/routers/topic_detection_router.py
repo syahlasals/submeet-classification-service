@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request 
+from fastapi import APIRouter, Depends, HTTPException, Request 
 from config.settings import settings
 from schemas.request_schema import TopicDetectionRequest
 from domain.models.prediction_result import PredictionResult 
@@ -8,10 +8,30 @@ from infrastructure.ml.classification_model import ClassificationModel
 
 router = APIRouter()
 
-def get_topic_service(request: Request) -> TopicDetectionService:
+def get_topic_service(payload: TopicDetectionRequest, request: Request) -> TopicDetectionService:
     loader = request.app.state.model_loader
-    preprocessor = request.app.state.preprocessor
-    classifier = ClassificationModel(model_loader=loader, alpha=settings.ALPHA)
+    # preprocessor = request.app.state.preprocessor
+    
+    target_model_name = payload.base_model if payload.base_model else settings.DEFAULT_BASE_MODEL
+    
+    try:
+        model_data = loader.get_model(target_model_name)
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    
+    preprocessor = TextPreprocessor(
+        vocab=model_data["word_to_idx"],
+        max_seq_len=settings.MAX_SEQ_LEN,
+        max_vocab=settings.MAX_VOCAB
+    )
+
+    classifier = ClassificationModel(
+        cnn_model=model_data["cnn_model"], 
+        sigmas=model_data["sigmas"], 
+        alpha=settings.ALPHA,
+        base_model=model_data["base_model"]
+    )
+    
     return TopicDetectionService(preprocessor, classifier)
 
 @router.post("/detect", response_model=PredictionResult, status_code=200)

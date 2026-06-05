@@ -9,3 +9,5 @@ __pycache__/
 .ipynb_checkpoints/
 *.log
 *.zip
+file_model
+*.txt

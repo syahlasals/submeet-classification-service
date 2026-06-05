@@ -8,31 +8,22 @@ from infrastructure.preprocessing.text_preprocessor import TextPreprocessor
 
 from api.routers import topic_detection_router
 from config.settings import settings
-from infrastructure.ml.model_loader import ModelLoader
+from infrastructure.ml.model_loader import DynamicModelLoader
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-global_model_loader = ModelLoader(
-    cnn_path=settings.CNN_MODEL_PATH, 
-    sigmas_path=settings.SIGMAS_PATH,
-    # vocab_path=settings.VOCAB_PATH
-)
+global_model_loader = DynamicModelLoader(base_dir=settings.MODEL_DIR)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        global_model_loader.load_all()
+        global_model_loader.get_model(settings.DEFAULT_BASE_MODEL)
         app.state.model_loader = global_model_loader
-        app.state.preprocessor = TextPreprocessor(
-            vocab_path=settings.VOCAB_PATH,
-            max_seq_len=settings.MAX_SEQ_LEN,
-            max_vocab=settings.MAX_VOCAB
-        )
-        logger.info("Model dan preprocessor berhasil dimuat.")
+        logger.info("Model berhasil diinisialisasi.")
     except Exception as e:
-        logger.error(f"Gagal memuat model dan preprocessor: {e}")
+        logger.error(f"Gagal memuat model: {e}")
         raise e
     yield
 

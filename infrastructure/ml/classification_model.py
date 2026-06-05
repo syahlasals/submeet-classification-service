@@ -1,14 +1,15 @@
 import numpy as np
 import logging
-from infrastructure.ml.model_loader import ModelLoader
+from infrastructure.ml.model_loader import DynamicModelLoader
 
 logger = logging.getLogger(__name__)
 
 class ClassificationModel:
-    def __init__(self, model_loader: ModelLoader, alpha: float):
-        self.cnn_model = model_loader.cnn_model
-        self.sigmas = model_loader.sigmas
+    def __init__(self, cnn_model, sigmas, alpha: float, base_model: str):
+        self.cnn_model = cnn_model
+        self.sigmas = sigmas
         self.alpha = alpha
+        self.base_model = base_model
 
     def _calculate_doc_threshold(self, max_class: int) -> tuple[str, float]:
         predicted_topic = f"Topic-{max_class}"

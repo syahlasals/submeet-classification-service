@@ -6,9 +6,8 @@ class Settings(BaseSettings):
     PORT: int
 
     # Model paths
-    CNN_MODEL_PATH: str
-    SIGMAS_PATH: str
-    VOCAB_PATH: str
+    MODEL_DIR: str
+    DEFAULT_BASE_MODEL: str
 
     # Hyperparameter Model
     ALPHA: int

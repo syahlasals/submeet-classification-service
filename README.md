@@ -95,7 +95,7 @@ Menerima request klasifikasi topik dan mengembalikan hasil prediksi langsung.
   "relevance_label": "in_scope",
   "predicted_topic": "Renewable Energy",
   "confidence_score": 0.9876,
-  "model_label_raw": "bestmodel_glove_OA1"
+  "model_version": "bestmodel_glove_OA1"
 }
 ```
 

@@ -11,18 +11,7 @@ class TopicDetectionService:
     def __init__(self, preprocessor: TextPreprocessor, classifier: ClassificationModel):
         self.preprocessor = preprocessor
         self.classifier = classifier
-        self.model_name = self._generate_model_name()
-
-    def _generate_model_name(self) -> str:
-        try:
-            model_path = settings.CNN_MODEL_PATH
-            file_name = os.path.basename(model_path)
-            model_name = os.path.splitext(file_name)[0]
-
-            return model_name
-        except Exception as e:
-            logger.error(f"Gagal mengambil versi model: {e}")
-            return "UNKNOWN_MODEL_VERSION"
+        self.model_version = self.classifier.base_model
 
     def process_text(self, paper_sub_id: int, title: str, abstract: str) -> PredictionResult:
         logger.info(f"Memulai analisis untuk Paper ID: {paper_sub_id}")
@@ -43,7 +32,7 @@ class TopicDetectionService:
                 relevance_label=result_dict["relevance_label"],
                 predicted_topic=result_dict["predicted_topic"],
                 confidence_score=result_dict["confidence_score"],
-                model_label_raw=self.model_name
+                model_version=self.model_version
             )
             
         except Exception as e:
