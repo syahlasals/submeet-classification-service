@@ -1,0 +1,38 @@
+name: Deploy FastAPI to Azure VM
+
+on:
+  push:
+    branches:
+      - main # Workflow berjalan otomatis setiap ada push ke branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mengeksekusi perintah deployment via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            # 1. Masuk ke folder proyek di dalam Azure VM
+            cd ~/submeet-classification-service
+            
+            # 2. Tarik kode terbaru dari GitHub
+            git pull origin main
+            
+            # 3. Hentikan dan hapus container yang lama (abaikan error jika belum ada)
+            docker stop submeet-fastapi || true
+            docker rm submeet-fastapi || true
+            
+            # 4. Build ulang image Docker dengan kode terbaru
+            docker build -t submeet-classifier .
+            
+            # 5. Jalankan kembali container FastAPI
+            docker run -d \
+              --name submeet-fastapi \
+              --env-file .env \
+              -p 8001:8001 \
+              --restart unless-stopped \
+              submeet-classifier
