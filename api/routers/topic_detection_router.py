@@ -8,12 +8,10 @@ from infrastructure.ml.classification_model import ClassificationModel
 
 router = APIRouter()
 
-def get_topic_service(payload: TopicDetectionRequest, request: Request) -> TopicDetectionService:
-    loader = request.app.state.model_loader
-    # preprocessor = request.app.state.preprocessor
-    
-    target_model_name = payload.base_model if payload.base_model else settings.DEFAULT_BASE_MODEL
-    
+def get_model_loader(request: Request):
+    return request.app.state.model_loader
+
+def get_topic_service(target_model_name: str, loader) -> TopicDetectionService:
     try:
         model_data = loader.get_model(target_model_name)
     except FileNotFoundError as e:
@@ -37,8 +35,10 @@ def get_topic_service(payload: TopicDetectionRequest, request: Request) -> Topic
 @router.post("/detect", response_model=PredictionResult, status_code=200)
 def detect_topic(
     payload: TopicDetectionRequest, 
-    service: TopicDetectionService = Depends(get_topic_service)
+    loader = Depends(get_model_loader)
 ):
+    service = get_topic_service(payload.base_model, loader)
+    
     result = service.process_text(
         paper_sub_id=payload.paper_sub_id,
         title=payload.title,
