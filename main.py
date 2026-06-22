@@ -1,11 +1,8 @@
 # entry point FastAPI, tempat app dibuat dan router di-register
 import logging
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
-from uvicorn import config
-from infrastructure.preprocessing.text_preprocessor import TextPreprocessor
-
 from api.routers import topic_detection_router
 from config.settings import settings
 from infrastructure.ml.model_loader import DynamicModelLoader
